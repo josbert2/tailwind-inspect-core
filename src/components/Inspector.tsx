@@ -532,6 +532,7 @@ export function Inspector() {
             </button>
           </div>
         </div>
+
         {LoadTailwindCDN()}
         {renderSearchForClasses()}
 
@@ -564,14 +565,14 @@ export function Inspector() {
       {/* Tabs */}
       {state.selectedElement || state.activeTab === 'settings' ? (
         <>
-          <div className="flex border-b bg-base-100 border-gray-200">
+          <div className="flex items-center px-3 border-b bg-bg-weak-50 ">
             {state.selectedElement && (
               <>
                 <button
                   onClick={() => setState(prev => ({ ...prev, activeTab: 'design' }))}
                   className={`flex-1 px-4 py-2 text-sm font-medium ${
                     state.activeTab === 'design'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      ? 'twi-tab-active'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -581,7 +582,7 @@ export function Inspector() {
                   onClick={() => setState(prev => ({ ...prev, activeTab: 'code' }))}
                   className={`flex-1 px-4 py-2 text-sm font-medium ${
                     state.activeTab === 'code'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      ? 'twi-tab-active'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -591,7 +592,7 @@ export function Inspector() {
                   onClick={() => setState(prev => ({ ...prev, activeTab: 'html' }))}
                   className={`flex-1 px-4 py-2 text-sm font-medium ${
                     state.activeTab === 'html'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      ? 'twi-tab-active'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >

@@ -8,6 +8,8 @@ export default {
       colors: {
         "base-100": "var(--base-100)",
         "base-200": "var(--base-200)",
+
+        "bg-weak-50": "var(--bg-weak-50)",
         
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

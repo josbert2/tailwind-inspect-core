@@ -28,6 +28,8 @@
 
       --base-100:oklch(100% 0 0);
       --base-200:oklch(97% 0 0);
+      --bg-weak-50: #F5F7FA;
+      
     }
    
     .dark {
@@ -60,4 +62,30 @@
     body {
       @apply font-sans antialiased bg-background text-foreground;
     }
+  }
+
+
+  .shadow-toggle-switch, .shadow-tooltip {
+      box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+
+  .shadow-toggle-switch {
+      --tw-shadow: 0 6px 10px 0 #0e121b0f, 0 2px 4px 0 #0e121b08;
+      --tw-shadow-colored: 0 6px 10px 0 var(--tw-shadow-color), 0 2px 4px 0 var(--tw-shadow-color);
+  }
+
+  .text-label-sm {
+    font-size: .875rem;
+    line-height: 1.25rem;
+    letter-spacing: -.006em;
+    font-weight: 500;
+  }
+
+  .twi-tab-active{
+    background-color: #fff;
+    --tw-shadow: 0 6px 10px 0 #0e121b0f, 0 2px 4px 0 #0e121b08;
+    --tw-shadow-colored: 0 6px 10px 0 var(--tw-shadow-color), 0 2px 4px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    @apply  relative z-10 h-7 whitespace-nowrap rounded-md px-1 outline-none flex items-center;
+    @apply justify-center gap-1.5 transition duration-300 ease-out focus:outline-none ;
   }
