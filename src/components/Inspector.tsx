@@ -309,7 +309,7 @@ export function Inspector() {
   const renderDesignTab = () => (
     <div className="space-y-4">
       {/* Spacing Section */}
-      <div className="border rounded-lg p-3">
+      <div className="border rounded-lg p-3  bg-base-100">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-medium flex items-center gap-2">
             <Layout size={16} />
@@ -334,7 +334,7 @@ export function Inspector() {
       </div>
 
       {/* Typography Section */}
-      <div className="border rounded-lg p-3">
+      <div className="border rounded-lg p-3  bg-base-100" >
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-medium flex items-center gap-2">
             <Type size={16} />
@@ -359,7 +359,7 @@ export function Inspector() {
       </div>
 
       {/* Active Classes */}
-      <div className="border rounded-lg p-3">
+      <div className="border rounded-lg p-3  bg-base-100">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-medium flex items-center gap-2">
             <Box size={16} />
@@ -373,7 +373,7 @@ export function Inspector() {
               value={newClass}
               onChange={(e) => setNewClass(e.target.value)}
               placeholder="Add class (e.g., py-[20000px])"
-              className="flex-1 px-2 py-1 text-sm border rounded"
+              className="flex-1 px-3 py-2 text-sm border rounded-[24px]"
             />
             <button
               type="submit"
@@ -393,9 +393,9 @@ export function Inspector() {
                 type="checkbox"
                 checked={true}
                 onChange={() => toggleClass(className)}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 checkbox" 
               />
-              <span>{className}</span>
+              <span className="label cursor-pointer">{className}</span>
             </div>
           ))}
         </div>
@@ -428,7 +428,7 @@ export function Inspector() {
       <input
         type="text"
         placeholder="Search Tailwind class..."
-        className="border px-2 py-1 w-full rounded"
+        className="border px-3 py-2 w-full rounded-[24px]"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -501,7 +501,7 @@ export function Inspector() {
         zIndex: 9999,
         cursor: isDragging ? 'grabbing' : 'auto'
       }}
-      className="w-80 bg-neutral shadow-lg border border-gray-200 rounded-lg flex flex-col"
+      className="w-80 bg-base-200 rounded-[24px] shadow-lg border border-border flex flex-col"
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
@@ -539,7 +539,7 @@ export function Inspector() {
           <div className="flex items-center gap-2">
             <button
               onClick={undo}
-              className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+              className="p-2 hover:bg-primary rounded-lg disabled:opacity-50"
               disabled={state.historyIndex <= 0}
             >
               <Undo size={16} />
@@ -564,7 +564,7 @@ export function Inspector() {
       {/* Tabs */}
       {state.selectedElement || state.activeTab === 'settings' ? (
         <>
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b bg-base-100 border-gray-200">
             {state.selectedElement && (
               <>
                 <button
