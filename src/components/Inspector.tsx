@@ -64,6 +64,9 @@ export function Inspector() {
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredClasses, setFilteredClasses] = useState<string[]>([]);
+  const [activeClasses, setActiveClasses] = useState<Record<string, boolean>>({});
+
+
   // Initialize Tailwind CDN and config
   useEffect(() => {
     if (state.useCDN) {
@@ -221,15 +224,16 @@ export function Inspector() {
     };
   }, [state.isInspecting]);
 
-  // Handle class changes
   const toggleClass = (className: string) => {
+    console.log(className);
     if (!state.selectedElement) return;
 
     const newClasses = classes.includes(className)
       ? classes.filter(c => c !== className)
       : [...classes, className];
 
-    // Generate CSS for arbitrary values if needed
+
+
     if (className.includes('[') && className.includes(']')) {
       const css = generateTailwindClass(className);
       if (css && styleTagRef.current) {
@@ -244,8 +248,12 @@ export function Inspector() {
       }
     }
 
+    console.log(newClasses);
+
     setClasses(newClasses);
-    state.selectedElement.className = newClasses.join(' ');
+    if (state.selectedElement) {
+      state.selectedElement.className = newClasses.join(' ');
+    }
 
     // Add to history
     setState(prev => ({
@@ -383,19 +391,19 @@ export function Inspector() {
             </button>
           </div>
         </form>
-        <div className="space-y-1 max-h-40 overflow-y-auto">
+        <div className="space-y-1 flex gap-1 flex-wrap max-h-40 overflow-y-auto">
           {classes.map((className) => (
             <div
               key={className}
-              className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded text-sm"
+              className="flex items-center gap-2 p-1.5 bg-gray-100 hover:bg-gray-300 cursor-auto rounded-[24px] px-3 text-sm"
             >
               <input
                 type="checkbox"
-                checked={true}
+                checked={classes.includes(className)}
                 onChange={() => toggleClass(className)}
-                className="rounded border-gray-300 checkbox" 
+                className=" border-gray-300 checkbox w-2 h-2 rounded-[24px] px-2 py-2" 
               />
-              <span className="label cursor-pointer">{className}</span>
+              <span className="label p-0 cursor-pointer">{className}</span>
             </div>
           ))}
         </div>
