@@ -10,6 +10,8 @@ import  LoadTailwindCDN  from './LoadCdnTailwind';
 import Fuse from 'fuse.js';
 
 
+
+
 interface InspectorState {
   isInspecting: boolean;
   selectedElement: HTMLElement | null;
@@ -38,7 +40,7 @@ interface TailwindConfig {
 
 // Crear un índice de búsqueda difusa con Fuse.js
 const fuse = new Fuse(allTailwindClasses, {
-  threshold: 0.3,
+  threshold: 0.4,
 });
 
 
@@ -64,8 +66,10 @@ export function Inspector() {
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredClasses, setFilteredClasses] = useState<string[]>([]);
-  const [activeClasses, setActiveClasses] = useState<Record<string, boolean>>({});
-
+  const [classList, setClassList] = useState<{ 
+    name: string; 
+    active: boolean 
+  }[]>([]);
 
   // Initialize Tailwind CDN and config
   useEffect(() => {
@@ -110,8 +114,9 @@ export function Inspector() {
       setHighlightedIndex(-1);
       return;
     }
-
+    
     const results = fuse.search(searchTerm);
+  
     setFilteredClasses(results.slice(0, 20).map((r) => r.item));
     setHighlightedIndex(0);
   }, [searchTerm]);
@@ -210,7 +215,10 @@ export function Inspector() {
         selectedElement: target,
         isInspecting: false
       }));
-      setClasses(Array.from(target.classList));
+      const elementClasses = Array.from(target.classList);
+      setClassList(
+        elementClasses.map(cls => ({ name: cls, active: true }))
+      );
     };
 
     document.addEventListener('mouseover', handleMouseOver);
@@ -223,54 +231,57 @@ export function Inspector() {
       document.removeEventListener('click', handleClick);
     };
   }, [state.isInspecting]);
-
-  const toggleClass = (className: string) => {
+  
+  function toggleClass(className: string) {
+   
     console.log(className);
     if (!state.selectedElement) return;
-
-    const newClasses = classes.includes(className)
-      ? classes.filter(c => c !== className)
-      : [...classes, className];
-
-
-
-    if (className.includes('[') && className.includes(']')) {
-      const css = generateTailwindClass(className);
-      if (css && styleTagRef.current) {
-        const existingStyles = styleTagRef.current.textContent || '';
-        if (!existingStyles.includes(className)) {
-          styleTagRef.current.textContent = existingStyles + `
-            .${className.replace(/[\[\]#]/g, '\\$&')} {
-              ${css}
-            }
-          `;
+  
+    setClassList((prev) => {
+      // Creamos un nuevo array mapeando los items:
+      const newList = prev.map((item) => {
+        if (item.name === className) {
+          // Invertimos su estado (on/off)
+          return { ...item, active: !item.active };
         }
-      }
-    }
-
-    console.log(newClasses);
-
-    setClasses(newClasses);
-    if (state.selectedElement) {
-      state.selectedElement.className = newClasses.join(' ');
-    }
-
-    // Add to history
-    setState(prev => ({
-      ...prev,
-      history: [...prev.history.slice(0, prev.historyIndex + 1), newClasses.join(' ')],
-      historyIndex: prev.historyIndex + 1
-    }));
-  };
+        return item;
+      });
+  
+      // Construir array de nombres “activos”
+      const activeNames = newList
+        .filter((item) => item.active)
+        .map((item) => item.name);
+  
+      // Asignar las clases al elemento seleccionado
+      state.selectedElement.className = activeNames.join(' ');
+  
+      // (Opcional) Historial para undo/redo:
+      setState((prevState) => ({
+        ...prevState,
+        history: [
+          ...prevState.history.slice(0, prevState.historyIndex + 1),
+          activeNames.join(' '),
+        ],
+        historyIndex: prevState.historyIndex + 1,
+      }));
+  
+      return newList;
+    });
+  }
 
   // Add new class
-  const addNewClass = (e: React.FormEvent) => {
+  function addNewClass(e: React.FormEvent) {
     e.preventDefault();
-    if (!newClass || !state.selectedElement) return;
-    
-    toggleClass(newClass);
+    if (!newClass.trim() || !state.selectedElement) return;
+  
+    // Agregarla como activa de primeras
+    setClassList((prev) => [
+      ...prev,
+      { name: newClass, active: true },
+    ]);
+  
     setNewClass('');
-  };
+  }
 
   // Handle undo/redo
   const undo = () => {
@@ -392,18 +403,18 @@ export function Inspector() {
           </div>
         </form>
         <div className="space-y-1 flex gap-1 flex-wrap max-h-40 overflow-y-auto">
-          {classes.map((className) => (
+          {classList.map(({ name, active }) => (  
             <div
-              key={className}
+              key={name}
               className="flex items-center gap-2 p-1.5 bg-gray-100 hover:bg-gray-300 cursor-auto rounded-[24px] px-3 text-sm"
             >
               <input
                 type="checkbox"
-                checked={classes.includes(className)}
-                onChange={() => toggleClass(className)}
+                checked={active}
+                onChange={() => toggleClass(name)}
                 className=" border-gray-300 checkbox w-2 h-2 rounded-[24px] px-2 py-2" 
               />
-              <span className="label p-0 cursor-pointer">{className}</span>
+              <span className="label p-0 cursor-pointer">{name}</span>
             </div>
           ))}
         </div>
@@ -441,6 +452,10 @@ export function Inspector() {
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyDown}
       />
+
+
+
+
       {filteredClasses.length > 0 && (
         <ul className="absolute z-50 w-full bg-white border shadow mt-1 max-h-60 overflow-auto">
           {filteredClasses.map((cls, index) => (
@@ -456,6 +471,7 @@ export function Inspector() {
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
             >
+                
               {cls}
             </li>
           ))}
